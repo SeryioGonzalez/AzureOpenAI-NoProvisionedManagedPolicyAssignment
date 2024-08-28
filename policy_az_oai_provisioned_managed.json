@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "az_policy_definition_name": {
+      "type": "string",
+      "defaultValue": "NoAzOpenAIprovisionedManaged",
+      "metadata": {
+        "description": "Azure Policy Name"
+      }
+    }
+  },
+  "variables": {
+    "policyAssignmentName": "[concat(parameters('az_policy_definition_name'), '-policy-definition')]",
+    "policyDefinitionName": "[concat(parameters('az_policy_definition_name'), '-policy-assignment')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "apiVersion": "2020-03-01",
+      "name": "[variables('policyDefinitionName')]",
+      "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "policyRule": {
+          "if": {
+              "field": "Microsoft.CognitiveServices/accounts/deployments/sku.name",
+              "equals": "ProvisionedManaged"
+            
+          },
+          "then": {
+            "effect": "deny"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "apiVersion": "2020-03-01",
+      "name": "[variables('policyAssignmentName')]",
+      "properties": {
+        "scope": "[concat('/subscriptions/', subscription().subscriptionId)]",
+        "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName'))]"
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName'))]"
+      ]
+    }
+  ]
+}
