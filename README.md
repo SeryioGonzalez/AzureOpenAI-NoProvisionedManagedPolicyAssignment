@@ -1,4 +1,4 @@
-# Create and assing an Azure Policy for blocking Azure OpenAI provisioned managed deployments
+# Create and assign an Azure Policy for blocking Azure OpenAI Provisioned Managed deployments
 This is a subscription template that will create and assing an Azure Policy for blocking Azure OpenAI Provisioned Managed resources in a given subscription.
 The Azure Policy definition will be created at subscription scope. The policy assignment will be at subscription level
 
